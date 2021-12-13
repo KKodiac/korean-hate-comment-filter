@@ -1,35 +1,24 @@
 import json
 from flask import Flask, request
-from flask_cors import CORS, cross_origin
-from nlp.speech_classifier import CommentClassifier
-
-
-class CommentClassifierServer:
-    def __init__(self):
-        self.tc = CommentClassifier()
-        self.tc.fit()
+from pre_trained_predict import predict
 
 
 app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-
-tc_server = CommentClassifierServer()
 
 
 @app.route('/')
-@cross_origin()
-def root():
-    return 'Hello world!'
+def index():
+    return 'hello world'
 
 
-@app.route('/block-hate-speech', methods=['POST'])
-@cross_origin()
-def classify_tweet():
-    request_data = request.get_json()
-    youtube_comment = None
-    prediction = None
+
+@app.route('/predict/<text>', methods=['GET'])
+async def root(text):
+    print(text)
+    pred = await predict(text)
+    return {"pred": pred, "text": text}
+
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=3000, debug=True)
