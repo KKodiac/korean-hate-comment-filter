@@ -1,22 +1,30 @@
 import json
-from flask import Flask, request
-from pre_trained_predict import predict
+from flask import Flask, request, render_template
+from pre_trained_predict import predict, predict_with_pretrained, distil_predict
 
 
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return 'hello world'
+    if request.method == 'POST':
+        pre_text = request.form['pre_trained']
+        our_text = request.form['our_own']
+        distil_text = request.form['distil_trained']
+        pred_pre = predict_with_pretrained(pre_text)
+        pred_our = predict(our_text)
+        pred_distil = distil_predict(distil_text)
+        return render_template('index.html', 
+            text=pre_text, 
+            prediction=pred_pre, 
+            our_text=our_text,
+            our_prediction=pred_our,
+            distil_text=distil_text,
+            distil_prediction=pred_distil)
 
-
-
-@app.route('/predict/<text>', methods=['GET'])
-async def root(text):
-    print(text)
-    pred = await predict(text)
-    return {"pred": pred, "text": text}
+    elif request.method == 'GET':
+        return render_template('index.html', text="", prediction="")
 
 
 
