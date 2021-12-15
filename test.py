@@ -18,6 +18,8 @@ config = DistilBertConfig.from_json_file('config.json')
 model = TFAutoModelForSequenceClassification.from_pretrained("model.h5", config=config)
 tokenizer = AutoTokenizer.from_pretrained("monologg/koelectra-base-v3-hate-speech")
 
+
+# DistilBERT-Multilingual에서 자체 fine-tuning한 모델 테스팅
 def my_test_set():
     test = pd.read_csv('data/test.tsv', quoting=csv.QUOTE_NONE,sep='\t', error_bad_lines=False)
     x_test = encode(test.content.tolist(), tokenizer, MAX_LEN)
@@ -31,6 +33,7 @@ def my_test_set():
     print(accuracy_score(y_true_testset_kaggle, y_pred_testset_kaggle))
 
 
+# DistilBERT-Multilingual 테스팅
 def distil_test_set():
     test = pd.read_csv('data/test.tsv', quoting=csv.QUOTE_NONE,sep='\t', error_bad_lines=False)
     x_test = encode(test.content.tolist(), tokenizer, MAX_LEN)
